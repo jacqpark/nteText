@@ -35,7 +35,6 @@ You can fetch the dataset as follows:
 
 ```{r example}
 library(nteText)
-dt = data("nteText")
-head(dt, 5)
+data(nteText)
 ```
 
