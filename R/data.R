@@ -1,0 +1,24 @@
+#' National Trade Estimate (NTE) Reports 1995 - 2022 as Text Data
+#'
+#' A dataset containing original text of NTE reports broken down into country-year-subsection level for text analysis purposes
+#'
+#' @format A data frame with 12865 rows and 7 columns.
+#' \describe{
+#' \item{year}{Calendar year in which the report was written}
+#' \item{country}{Country appearing in the report}
+#' \item{section}{Areas of concerns raised by the US against the country, categorized as: "Import Policies",
+#' "Export Subsidies", "Standards, Labeling and Certification", "Government Procurement", "IP Rights",
+#' "Services Barriers", "Investment Barriers", "Anti-competitive Practices", "Technical Barriers to Trade",
+#' "Sanitary and Phytosanitary Barriers", "E-commerce", "Barriers to Digital Trade", "Agriculture", "Trade Remedies",
+#' "Other Barriers"}
+#' \item{text}{Original text of the report corresponding to each section}
+#' \item{section_len}{Word count of each section}
+#' \item{cty_len}{Word count of each country chapter}
+#' \item{doc_len}{Word count of each NTE annual report}
+#' }
+#'
+#' @source Created by Jihye Park, original text from ustr.gov using WayBack Machine
+#'
+#' @examples
+#' data(nteText)
+"nteText"
