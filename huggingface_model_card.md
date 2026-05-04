@@ -234,10 +234,26 @@ entailing it.
 
 ## Citation
 
+To cite the model and companion package directly.
+
+```bibtex
+@software{park_nteText_2026,
+  author    = {Park, Jihye},
+  title     = {nteText: USTR National Trade Estimate Corpus and IPR Hypothesis Scores},
+  year      = {2026},
+  publisher = {Zenodo},
+  version   = {v0.1.0},
+  doi       = {10.5281/zenodo.20028790},
+  url       = {https://github.com/jacqpark/nteText}
+}
+```
+
+To cite the working paper that introduces the measure.
+
 ```bibtex
 @unpublished{park_nteipr,
   author = {Park, Jihye},
-  title  = {National Trade Estimate text-as-data analysis of intellectual property barriers},
+  title  = {Aid, Lending, and TRIPS},
   note   = {Working paper, University of Geneva},
   year   = {2026}
 }
