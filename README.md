@@ -42,5 +42,5 @@ as a template.
 
 ## Citation
 
-Park, J. (2026). National Trade Estimate text-as-data analysis of
-intellectual property barriers. Working paper, University of Geneva.
+Park, J. (2026). Aid, Lending, and TRIPS. Working paper, University
+of Geneva.
