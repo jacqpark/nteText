@@ -1,6 +1,6 @@
 # nteText
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20028790.svg)](https://doi.org/10.5281/zenodo.20028790)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20028789.svg)](https://doi.org/10.5281/zenodo.20028789)
 
 Replication data and tooling for analysis of USTR National Trade Estimate
 (NTE) reports. Ships the section-level corpus and a fine-tuned DeBERTa-v3
@@ -45,4 +45,4 @@ as a template.
 ## Citation
 
 Park, J. (2026). Aid, Lending, and TRIPS. Working paper, University
-of Geneva. https://doi.org/10.5281/zenodo.20028790
+of Geneva. https://doi.org/10.5281/zenodo.20028789
