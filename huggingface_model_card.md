@@ -33,17 +33,23 @@ indicate paragraphs that do not contain barrier criticism.
 The classifier follows the natural-language-inference (NLI) framework
 for hypothesis-based supervised text scoring described in Grimmer,
 Roberts, and Stewart (2022, *Text as Data*, Princeton University
-Press). For each paragraph the model evaluates 13 hand-crafted
-hypotheses about
-IPR barriers (patent enforcement, copyright piracy, trademark abuse,
-compulsory licensing, parallel imports, regulatory delay, and related
-themes). Pooled logits across hypotheses produce the final score.
+Press). Each input paragraph is paired with each of 13 hand-crafted
+hypotheses about IPR barriers, and the softmax probability of
+entailment for each pair is multiplied by a fixed hypothesis weight.
+Weighted entailment probabilities are summed to produce a raw score,
+which is then min-max rescaled to roughly the -5 to +5 range using
+the bounds of the published 1,432-paragraph corpus.
+
+The full inference pipeline (premise template, 13 hypotheses, weights,
+aggregation, and rescaling formula) is documented below in the
+"Inference pipeline" section.
 
 Hypothesis structure
 
-- Six factual hypotheses (H1 through H4, H12, H13).
-- Seven interpretive hypotheses (H5 through H11) capturing rhetorical
-  framing of barriers as severe, persistent, or strategic.
+- Six factual hypotheses (H1 through H4, H12, H13) about objective
+  IPR designations and event mentions.
+- Seven interpretive hypotheses (H5 through H11) capturing the
+  author's stance on the country's IPR efforts.
 
 ## Intended use
 
@@ -58,15 +64,26 @@ wrapper around this model.
 
 ```r
 remotes::install_github("jacqpark/nteText")
-nteText::nte_score_ipr(c("Sample paragraph one.", "Sample paragraph two."))
+nteText::nte_score_ipr(
+  text    = c("Patent enforcement remains weak across multiple sectors.",
+              "The country has fully implemented its TRIPS obligations."),
+  country = c("INDIA", "SINGAPORE"),
+  year    = c(2020L, 2020L)
+)
 ```
 
-Direct use from Python.
+Direct use from Python (with the helper from
+[inst/python/score_ipr.py](https://github.com/jacqpark/nteText/blob/master/inst/python/score_ipr.py)
+on the path).
 
 ```python
-from transformers import AutoModelForSequenceClassification, AutoTokenizer
-tok   = AutoTokenizer.from_pretrained("jacqpark/nte-deberta-ipr")
-model = AutoModelForSequenceClassification.from_pretrained("jacqpark/nte-deberta-ipr")
+import score_ipr
+scores = score_ipr.score(
+    text=["Patent enforcement remains weak across multiple sectors."],
+    country=["INDIA"],
+    year=[2020],
+    model_id="jacqpark/nte-deberta-ipr",
+)
 ```
 
 ## Limitations
@@ -98,6 +115,71 @@ cross-validation (roughly 1,598 pairs per fold on average, range
 1,578 to 1,629). All metrics reported below are fully out-of-sample.
 See `NTE_DeBERTa_V3_revised_colab.ipynb` in the source repository for
 exact hyperparameters.
+
+## Inference pipeline
+
+The steps below match the published scoring pipeline exactly. A
+reference Python implementation lives at
+[inst/python/score_ipr.py](https://github.com/jacqpark/nteText/blob/master/inst/python/score_ipr.py).
+
+### Premise template
+
+For each paragraph, the premise fed to the model is
+
+```
+This text is about the IPR protection situation in country {COUNTRY} and year {YEAR}: {TEXT}
+```
+
+where `{COUNTRY}` is the uppercased country name, `{YEAR}` is the
+report year, and `{TEXT}` is the paragraph text.
+
+### Hypotheses and weights
+
+The 13 hypotheses and their fixed score weights.
+
+| ID  | Type         | Hypothesis                                                                                          | Weight |
+|-----|--------------|-----------------------------------------------------------------------------------------------------|-------:|
+| H1  | factual      | The country is the Priority Foreign Country.                                                        |   -2.0 |
+| H2  | factual      | The country is on the Priority Watch List.                                                          |   -2.0 |
+| H3  | factual      | The country is on the Watch List.                                                                   |   -1.5 |
+| H4  | factual      | The country has markets listed as the Notorious Market.                                             |   -1.5 |
+| H5  | interpretive | The author of this text believes that the country does not put in efforts to combat IPR violations. |   -1.0 |
+| H6  | interpretive | The author of this text believes that the country has made efforts to combat IPR violations.        |   +1.0 |
+| H7  | interpretive | The author of this text supports the passage of the new IPR legislation in the country.             |   +1.0 |
+| H8  | interpretive | The author of this text opposes the passage of the new IPR legislation in the country.              |   -1.0 |
+| H9  | interpretive | The author of this text believes that there is widespread IPR violation in the country.             |   -1.5 |
+| H10 | interpretive | The author of this text believes that the country is lack of resources to combat IPR violations.    |   -1.0 |
+| H11 | interpretive | The author of this text believes that the country has strong IPR law.                               |   +2.0 |
+| H12 | factual      | This text mentions the increase of IPR violations in the country.                                   |   -1.0 |
+| H13 | factual      | This text mentions the decrease of IPR violations in the country.                                   |   +1.0 |
+
+### Aggregation
+
+For each (premise, hypothesis) pair, take the softmax over the
+three-class NLI head (entailment, neutral, contradiction) and read
+the entailment probability at index 0 (the convention used in the
+MoritzLaurer NLI checkpoint family). Sum across the 13 hypotheses,
+weighted.
+
+```
+raw_score = sum(P_entail(premise, h_i) * weight_i for i in 1..13)
+```
+
+### Rescaling
+
+Min-max rescale the raw score to roughly the -5 to +5 range using
+the bounds from the published corpus run.
+
+```
+PUBLISHED_RAW_MIN = -8.7824
+PUBLISHED_RAW_MAX =  4.5083
+
+scaled = -5 + 10 * (raw - PUBLISHED_RAW_MIN) / (PUBLISHED_RAW_MAX - PUBLISHED_RAW_MIN)
+```
+
+New paragraphs more extreme than anything in the published corpus
+may produce scaled scores outside the -5 to +5 envelope. That is
+expected behavior.
 
 ## Evaluation
 
