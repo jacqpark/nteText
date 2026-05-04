@@ -5,6 +5,8 @@
 #'
 #' @param data Corpus tibble. Defaults to \code{nte_load()}.
 #' @param keyword Character. The token or phrase to search for.
+#'   For multi-word phrases, wrap in \code{quanteda::phrase()},
+#'   e.g. \code{quanteda::phrase("compulsory licensing")}.
 #' @param window Integer. Number of tokens of context on each side.
 #' @param case_insensitive Logical. Whether to ignore case while matching.
 #' @return A tibble of keyword-in-context matches, one row per hit.

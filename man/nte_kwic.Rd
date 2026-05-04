@@ -9,7 +9,9 @@ nte_kwic(data = nte_load(), keyword, window = 8L, case_insensitive = TRUE)
 \arguments{
 \item{data}{Corpus tibble. Defaults to \code{nte_load()}.}
 
-\item{keyword}{Character. The token or phrase to search for.}
+\item{keyword}{Character. The token or phrase to search for.
+For multi-word phrases, wrap in \code{quanteda::phrase()},
+e.g. \code{quanteda::phrase("compulsory licensing")}.}
 
 \item{window}{Integer. Number of tokens of context on each side.}
 
