@@ -1,0 +1,94 @@
+---
+title: "Extending to new text and other issue areas"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Extending to new text and other issue areas}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", eval = FALSE)
+```
+
+# Scoring new IPR paragraphs
+
+```{r}
+library(nteText)
+
+new_paragraphs <- c(
+  "Patent enforcement remains weak across multiple sectors. Counterfeit pharmaceuticals account for an estimated 30 percent of domestic sales.",
+  "The country has fully implemented its TRIPS obligations and maintains robust enforcement mechanisms."
+)
+nte_score_ipr(
+  text    = new_paragraphs,
+  country = c("INDIA", "SINGAPORE"),
+  year    = c(2020L, 2020L)
+)
+```
+
+Each input requires a country and a year. Both are inserted into the
+premise template the model was trained against, so passing accurate
+metadata matters. Lower (more negative) scores indicate stronger
+IPR-barrier rhetoric.
+
+The first call downloads the model weights from Hugging Face Hub and
+caches them locally, so subsequent calls are fast.
+
+The scoring function targets IPR paragraphs only. The fine-tuned model
+was trained on hypothesis labels specific to intellectual property
+rights barriers. Applying it to paragraphs from other issue areas will
+produce out-of-distribution outputs without any error or warning.
+
+# Working with other issue areas without the model
+
+For non-IPR sections, the package provides corpus exploration tools
+that do not require any classifier.
+
+```{r}
+services <- nte_subset(issue = "SERVICES")
+
+nte_kwic(services, keyword = "telecommunications", window = 10)
+
+nte_term_trends(services,
+  terms = c("digital", "data localization", "cross-border data"))
+
+nte_wordcloud(
+  services,
+  group_a = country == "CHINA",
+  group_b = country == "INDIA",
+  top_n = 60
+)
+
+nte_compare_corpora(
+  services,
+  group_a = year >= 2015,
+  group_b = year < 2010,
+  measure = "chi2",
+  top_n = 30
+)
+```
+
+# Fine-tuning your own model for another issue area
+
+The fine-tuning workflow that produced the IPR model lives in the
+\code{NTE_DeBERTa_V3_revised_colab.ipynb} notebook in the source
+repository. To extend hypothesis classification to another issue area,
+run that notebook against a labeled training set for that area, push
+the resulting checkpoint to Hugging Face Hub, and pass its identifier
+to the \code{model_id} argument.
+
+```{r}
+nte_score_ipr(
+  text    = services_paragraphs,
+  country = services_countries,
+  year    = services_years,
+  model_id = "you/nte-deberta-services"
+)
+```
+
+The function name keeps its IPR-only naming because the helper
+hardcodes 13 IPR hypotheses and a min-max rescaling fitted to the
+published IPR corpus. Adapting it to a different label schema requires
+editing \code{inst/python/score_ipr.py} (replace the \code{HYPOTHESES}
+list and the \code{PUBLISHED_RAW_MIN}/\code{PUBLISHED_RAW_MAX} bounds).

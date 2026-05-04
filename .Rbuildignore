@@ -1,3 +1,10 @@
-^nteText\.Rproj$
+^.*\.Rproj$
 ^\.Rproj\.user$
+^data-raw$
 ^README\.Rmd$
+^\.github$
+^LICENSE\.md$
+^docs$
+^_pkgdown\.yml$
+^\.DS_Store$
+^huggingface_model_card\.md$

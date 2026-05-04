@@ -1,0 +1,59 @@
+---
+title: "Introduction to nteText"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to nteText}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+This package ships the section-level corpus from the United States Trade
+Representative's annual National Trade Estimate reports along with
+hypothesis-alignment scores for the intellectual property rights issue
+area. The scores come from a DeBERTa-v3 classifier fine-tuned on the
+hand-labeled training set described in Park (2026, working paper).
+
+# Loading the corpus
+
+```{r}
+library(nteText)
+corp <- nte_load()
+dplyr::glimpse(corp)
+```
+
+# Subsetting to one issue area
+
+```{r}
+ipr <- nte_subset(corp, issue = "IPR")
+nrow(ipr)
+```
+
+You can also filter to specific years or countries.
+
+```{r}
+nte_subset(corp, issue = "SERVICES", years = 2010:2020,
+           countries = c("CHINA", "INDIA"))
+```
+
+# Bundled IPR scores
+
+```{r}
+scored <- nte_ipr_scored()
+dplyr::glimpse(scored)
+summary(scored$deberta_score)
+```
+
+# Quick exploration
+
+```{r, eval = FALSE}
+nte_kwic(ipr, keyword = "compulsory licensing", window = 10)
+
+nte_term_trends(ipr,
+  terms = c("geographical indication", "compulsory license"))
+
+nte_country_profile("CHINA", data = ipr, plot = TRUE)
+```

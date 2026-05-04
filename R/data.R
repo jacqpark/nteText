@@ -1,24 +1,38 @@
-#' National Trade Estimate (NTE) Reports 1995 - 2022 as Text Data
+#' USTR National Trade Estimate corpus, by section
 #'
-#' A dataset containing original text of NTE reports broken down into country-year-subsection level for text analysis purposes
+#' Section-level paragraphs from the Office of the United States Trade
+#' Representative annual NTE reports. Each row is one issue-area section
+#' for one country in one report year.
 #'
-#' @format A data frame with 12865 rows and 7 columns.
+#' @format A tibble with four columns.
 #' \describe{
-#' \item{year}{Calendar year in which the report was written}
-#' \item{country}{Country appearing in the report}
-#' \item{section}{Areas of concerns raised by the US against the country, categorized as: "Import Policies",
-#' "Export Subsidies", "Standards, Labeling and Certification", "Government Procurement", "IP Rights",
-#' "Services Barriers", "Investment Barriers", "Anti-competitive Practices", "Technical Barriers to Trade",
-#' "Sanitary and Phytosanitary Barriers", "E-commerce", "Barriers to Digital Trade", "Agriculture", "Trade Remedies",
-#' "Other Barriers"}
-#' \item{text}{Original text of the report corresponding to each section}
-#' \item{section_len}{Word count of each section}
-#' \item{cty_len}{Word count of each country chapter}
-#' \item{doc_len}{Word count of each NTE annual report}
+#'   \item{country}{Reporting target country, uppercased.}
+#'   \item{year}{Report year.}
+#'   \item{issue_area}{Issue-area heading from the report (e.g.
+#'     \code{"INTELLECTUAL PROPERTY RIGHTS"}).}
+#'   \item{text}{Section text.}
 #' }
+#' @source USTR National Trade Estimate Reports on Foreign Trade Barriers.
+"NTEbysect"
+
+
+#' DeBERTa-scored IPR paragraphs
 #'
-#' @source Created by Jihye Park, original text from ustr.gov using WayBack Machine
+#' Paragraph-level intellectual property rights sections, each scored by
+#' a DeBERTa-v3 classifier fine-tuned on a hand-labeled set of NTE IPR
+#' paragraphs (Park 2026, working paper). Lower (more negative) scores
+#' indicate stronger IPR-barrier rhetoric directed at the target country.
 #'
-#' @examples
-#' data(nteText)
-"nteText"
+#' @format A tibble with four columns.
+#' \describe{
+#'   \item{country}{Reporting target country, uppercased.}
+#'   \item{year}{Report year.}
+#'   \item{text}{Paragraph text.}
+#'   \item{deberta_score}{Hypothesis-alignment logit from the fine-tuned
+#'     model.}
+#' }
+#' @name NTE_IPR_scored_data
+#' @aliases NTE_IPR_scored
+#' @docType data
+#' @keywords datasets
+"NTE_IPR_scored"

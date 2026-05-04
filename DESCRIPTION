@@ -1,14 +1,39 @@
 Package: nteText
-Title: National Trade Estimate (NTE) Reports 1995 - 2022 as Text Data
-Version: 0.0.1
-Authors@R: 
-    person("Jihye", "Park", , "jihye.park@rochester.edu", role = c("aut", "cre"))
-Description: A dataset containing original text of NTE reports broken down into country-year-subsection level for text analysis purposes.
-License: file LICENSE
+Title: USTR National Trade Estimate Corpus and IPR Hypothesis Scores
+Version: 0.0.0.9000
+Authors@R:
+    person("Jihye", "Park", email = "jihye.park.psci@gmail.com",
+           role = c("aut", "cre"))
+Description: Replication data and tooling for analysis of USTR National Trade
+    Estimate (NTE) reports. Ships the section-level corpus from 1995 onward,
+    a fine-tuned DeBERTa-v3 hypothesis-classification scoring layer for the
+    intellectual property rights (IPR) issue area, and exploration utilities
+    such as keyword-in-context, term trends, comparative wordclouds, and
+    country profiles. The DeBERTa scoring function targets IPR text only.
+License: MIT + file LICENSE
 Encoding: UTF-8
-Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
-Depends: 
-    R (>= 2.10)
 LazyData: true
 LazyDataCompression: xz
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+Depends:
+    R (>= 4.1)
+Imports:
+    dplyr,
+    tibble,
+    stringr,
+    rlang,
+    ggplot2,
+    quanteda,
+    quanteda.textstats
+Suggests:
+    reticulate,
+    ggwordcloud,
+    tidytext,
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+VignetteBuilder: knitr
+URL: https://github.com/jacqpark/nteText
+BugReports: https://github.com/jacqpark/nteText/issues

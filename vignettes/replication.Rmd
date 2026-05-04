@@ -1,0 +1,43 @@
+---
+title: "Replicating the published analysis"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Replicating the published analysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", eval = FALSE)
+```
+
+The published analysis is fully reproducible from the data bundled with
+this package. No Python is required at replication time because the
+DeBERTa scores are pre-computed and shipped as \code{NTE_IPR_scored}.
+
+# One-shot reproduction
+
+```{r}
+library(nteText)
+nte_replicate_paper(dir = "replication_output")
+```
+
+This regenerates every figure and table in the manuscript and writes
+PNG and TEX files to the supplied directory.
+
+# Just the validation figures
+
+```{r}
+nte_validation_plots(dir = "validation_output")
+```
+
+# Re-deriving the IPR subset from the parent corpus
+
+The bundled \code{NTE_IPR_scored} dataset is a paragraph-level slice
+that adds DeBERTa scores. The corresponding section-level slice can be
+re-derived from \code{NTEbysect} as follows.
+
+```{r}
+section_level_ipr <- nte_subset(issue = "IPR")
+nrow(section_level_ipr)
+```

@@ -1,38 +1,46 @@
-
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
 # nteText
 
-<!-- badges: start -->
-<!-- badges: end -->
+Replication data and tooling for analysis of USTR National Trade Estimate
+(NTE) reports. Ships the section-level corpus and a fine-tuned DeBERTa-v3
+hypothesis-alignment scoring layer for the intellectual property rights
+(IPR) issue area.
 
-nteText provides National Trade Estimate (NTE) reports published
-annually by the Office of the United States Trade Representative (USTR)
-from 1995 to 2022 in a format of dataframe. This data features over 60
-countries determined as prominent trade partners by the United States
-and reorganized categories of trade concerns appearing most frequently
-in the reports into 15 sections; Import Policies, Export Subsidies,
-Standards, Labeling and Certification, Government Procurement,
-Intellectual Property Rights, Services Barriers, Investment Barriers,
-Anti-competitive Pratices, Technical Barriers to Trade, Sanitary and
-Phytosanitary Barriers, E-commerce, Barriers to Digital Trade,
-Agriculture, Trade Remedies and Other Barriers.
+## Install
 
-## Installation
-
-You can install the development version of nteText from
-[GitHub](https://github.com/) with:
-
-``` r
-# install.packages("devtools")
-devtools::install_github("jacqpark/nteText")
+```r
+remotes::install_github("jacqpark/nteText")
 ```
 
-## Example
+## Quick start
 
-You can fetch the dataset as follows:
-
-``` r
+```r
 library(nteText)
-data(nteText)
+
+# Full section-level corpus
+nte_load()
+
+# IPR subset (mirrors the NTE_IPR2 working file from the source repo)
+nte_subset(issue = "IPR")
+
+# Bundled DeBERTa-scored IPR paragraphs
+nte_ipr_scored()
+
+# One-shot regeneration of every figure and table in the paper
+nte_replicate_paper(dir = "out")
 ```
+
+## Scope of the DeBERTa model
+
+The shipped DeBERTa-v3 classifier was fine-tuned on hypothesis labels for
+the IPR issue area. Use `nte_score_ipr()` to score new IPR paragraphs.
+For other issue areas the package provides corpus exploration tools
+(keyword in context, term trends, comparative wordclouds, country
+profiles, keyness) but ships no classifier. To classify text from
+another issue area, fine-tune a separate model using the
+`NTE_DeBERTa_V3_revised_colab.ipynb` notebook from the source repository
+as a template.
+
+## Citation
+
+Park, J. (2026). National Trade Estimate text-as-data analysis of
+intellectual property barriers. Working paper, University of Geneva.
