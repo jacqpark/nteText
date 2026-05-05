@@ -42,7 +42,10 @@ another issue area, fine-tune a separate model using the
 `NTE_DeBERTa_V3_revised_colab.ipynb` notebook from the source repository
 as a template.
 
-## Citation
+## Citation for the package
 
-Park, J. (2026). Aid, Lending, and TRIPS. Working paper, University
-of Geneva. https://doi.org/10.5281/zenodo.20028789
+Park, J. (2026). nteText: USTR National Trade Estimate Corpus and IPR Hypothesis Scores. https://doi.org/10.5281/zenodo.20028789
+
+## Citation for the paper that introduces the measure
+
+Park J. (2026). Aid, Lending, and TRIPS. Working paper.
